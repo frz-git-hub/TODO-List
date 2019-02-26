@@ -1,0 +1,74 @@
+.todo{
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid lightgray;
+  background: white;
+}
+
+input{
+  border: none;
+  box-shadow: 0px 2px 20px rgba(196, 195, 195, 0.918);
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: inherit;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  
+  &:focus{
+    outline: none;
+  }
+}
+
+ul.list{  
+  list-style: none;
+  height: 100%;
+  max-height: 300px;
+  min-width: 35vw;
+  margin: 0px;
+  padding: 0px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0.3em;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: white;
+    width: 0px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(128, 128, 128, 0.562);
+    border-radius: 50px;
+  }
+
+  li{
+    user-select: none;
+    height: 2.5em;
+    width: 100%;
+    background: white;
+    color: black;
+    border-bottom: 2px solid lightgray;
+    overflow: hidden;
+    
+    &:last-child{
+      border: none;
+    }
+    
+    p{
+      display: block;
+      line-height: 50%;
+      
+      &.check{
+        color: red;
+        text-decoration: line-through;
+      }
+    }
+
+  }
+}
+
