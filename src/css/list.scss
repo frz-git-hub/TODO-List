@@ -1,8 +1,18 @@
+.content {
+  border: 1px solid lightgray;
+  padding: 10px;
+  // width: 80vw;
+  // display: grid;
+  // grid-column: 1fr 1fr 1fr ;
+  // grid-column-gap: 10px;
+}
+
 .todo{
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid lightgray;
   background: white;
+  // max-width: 35%;
 }
 
 input{
