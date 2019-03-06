@@ -1,90 +1,58 @@
 import React, {Component} from 'react';
-import '../css/list.css';
 
+// Done ======================================
 class Done extends Component {
 
-  // Constructor
-  constructor(props) {
-    super(props);
+  static classname = 'done'
+  static nextclass = 'finished'
 
-    this.state = {
-      donelist: [
-        { name: 'done', id: 1, checked: false },
-      ]
-    }
+  constructor(props){
+      super(props)
 
+      // Binding ------------------------
+      this.handleKey = this.handleKey.bind(this)
   }
 
-  // Event ----------------------------------
-  // 
-  handleKey = (e) => {
-    console.log('Event');
-    
-    let list = this.state.donelist;
-    let result = (e.key === 'Enter' && e.target.value !== '') ? () => {
-      this.addList({ name: e.target.value, id: (list.length === 0) ? 1 
-        : list.slice(-1)[0].id + 1, checked: false })
-      e.target.value = ''
-    }
-    : () => null;
-
-    return result()
+  // Events --------------------------------
+  handleKey(e){
+      const task = {}
+      const tasks = this.props.tasks;
+      if(e.key === 'Enter' && e.target.value !== '' ){
+          task['id'] = tasks.slice(-1)[0].id + 1 ;
+          task['name'] = e.target.value;
+          task['checked'] = false;
+          task['status'] = Done.classname
+      }else{
+          return null
+      }
+      this.props.onTasksKey(task)
   }
   // 
-  handleClick = (item) => {
-    console.log('Click : ', item);
-    
-    this.setState({
-      donelist: this.removeList(item.id)
-    });
+  handleClick(id){
+      const status = Done.nextclass 
+      this.props.onTasksClick(id, status)
   }
-  // List Properties --------------------------- 
-  // Remove from List
-  removeList = (id) => {
-    console.log('Remove');
-    
-    return this.state.donelist.filter(item => {
-      // item.id === id ? false : true;
-      return item.id !== id;
-    })
-  }
-  // Add to List
-  addList = (item) => {
-    console.log('Add : ', item);
-    // this.state.donelist.push(item);
-    var donelist = [...this.state.donelist, item]
-    this.setState({
-      donelist
-    })
-  }
-  
-  // Rendering ---------------------------------
+
+  // Rebdering ----------------------------------
   render(){
+      const tasks = this.props.tasks.filter( (task) => {
+          return task.status === Done.classname 
+      })
 
-    // Show Elements on UI ------------------------  
-    const showList = this.state.donelist.map(item => {
-      return (
-        <li onClick={this.handleClick.bind(this, item)} key={item.id} >
-          <p>{item.name}</p>
-        </li>
-      );
-    });
+      const list = tasks.map( (task) => {
+          return <li onClick={this.handleClick.bind(this, task.id)} key={task.id} >{task.name}</li>
+      })
 
-    return (
-      <React.Fragment>
-        {/* Done */}
-        <div className="todo" >
-          {/* Input */}
-          <input type="text" onKeyPress={this.handleKey} placeholder={'Write your task'} />
-          {/*List*/}
-          <ul className="list" >
-            {showList}
-          </ul>
-        </div>
-      </React.Fragment>
-    )
+      return(
+          <div className="list">
+              <h2>Done List</h2>
+              <input placeholder="Add to list..." onKeyPress={this.handleKey} />
+              <ul>
+                  {list}
+              </ul>
+          </div>
+      )
   }
-  
 }
 
 export default Done;

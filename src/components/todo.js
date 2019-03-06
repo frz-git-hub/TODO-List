@@ -1,93 +1,65 @@
 import React, {Component} from 'react';
-import '../css/list.css';
 
+// TODO ============================================
 class Todo extends Component {
+    
+  static classname = 'todo'
+  static nextclass = 'progress'
 
-  // Constructor
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      todolist: [
-        { name: 'todo', id: 1, checked: false },
-      ]
-    }
-
+  constructor(props){
+      super(props)
+      
+      // Binding ------------------------
+      this.handleKey = this.handleKey.bind(this)
   }
 
-  // lifeCycle -----------------------------
-
-
-
-  // Event ----------------------------------
-  // 
-  handleKey = (e) => {
-    console.log('Event');
-    
-    let list = this.state.todolist;
-    let result = (e.key === 'Enter' && e.target.value !== '') ? () => {
-      this.addList({ name: e.target.value, id: (list.length === 0) ? 1 
-        : list.slice(-1)[0].id + 1, checked: false })
-      e.target.value = ''
-    }
-    : () => null;
-
-    return result()
+  // Events --------------------------------
+  handleKey(e){
+      const task = {}
+      const tasks = this.props.tasks;
+      if(e.key === 'Enter' && e.target.value !== '' ){
+          task['id'] = tasks.slice(-1)[0].id + 1 ;
+          task['name'] = e.target.value;
+          task['checked'] = false;
+          task['status'] = Todo.classname 
+      }else{
+          return null
+      }
+      this.props.onTasksKey(task)
   }
   // 
-  handleClick = (item) => {
-    console.log('Click : ', item);
-    this.props.addToProgress(item);
-    this.setState({
-      todolist: this.removeList(item.id)
-    });
-  }
-  // List Properties --------------------------- 
-  // Remove from List
-  removeList = (id) => {
-    console.log('Remove', id);
-    
-    return this.state.todolist.filter(item => {
-      // item.id === id ? false : true; 
-      return item.id !== id;
-    })
-  }
-  // Add to List
-  addList = (item) => {
-    console.log('Add : ', item);
-    var todolist = [...this.state.todolist, item]
-    this.setState({
-      todolist
-    })
+  handleClick(id){
+      const status = Todo.nextclass
+      this.props.onTasksClick(id, status)
   }
 
-  // Rendering ---------------------------------
+  // Rebdering ----------------------------------
   render(){
+      const tasks = this.props.tasks.filter( (task) => {
+          return task.status === Todo.classname
+      })
 
-    // Show Elements on UI ------------------------
-    const showList = this.state.todolist.map(item => {
-      return (
-        <li onClick={this.handleClick.bind(this, item)} key={item.id} >
-          <p>{item.name}</p>
-        </li>
-      );
-    }) 
+      console.log('log');
+      
+      const list = tasks.map( (task) => {
+          return (
+              <li onClick={this.handleClick.bind(this, task.id)} key={task.id} >
+                  {task.name}
+              </li>
+          )
+      })
 
-    return (
-      <React.Fragment>
-        {/* Todo */}
-        <div className="todo" >
-          {/* Input */}
-          <input type="text" onKeyPress={this.handleKey} placeholder={'Write your task'} />
-          {/*List*/}
-          <ul className="list" >
-            {showList}
-          </ul>
-        </div>
-      </React.Fragment>
-    )
+      return(
+          <div className="list">
+              <h2>Todo List</h2>
+              <input placeholder="Add to list..." onKeyPress={this.handleKey} />
+              <ul>
+                  {list}
+              </ul>
+          </div>
+      )
   }
-  
 }
 
 export default Todo;
