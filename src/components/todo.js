@@ -29,7 +29,7 @@ class Todo extends Component {
       this.props.onTasksKey(task)
   }
   // 
-  handleClick(id){
+  handleClick(id) {
       const status = Todo.nextclass
       this.props.onTasksClick(id, status)
   }
