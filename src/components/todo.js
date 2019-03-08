@@ -39,9 +39,9 @@ class Todo extends Component {
       const tasks = this.props.tasks.filter( (task) => {
           return task.status === Todo.classname
       })
-
-      console.log('log');
       
+      console.log(this.classname);
+
       const list = tasks.map( (task) => {
           return (
               <li onClick={this.handleClick.bind(this, task.id)} key={task.id} >

@@ -1,68 +1,139 @@
 import React, { Component } from 'react';
-import Todo from './todo.js';
-import Progress from './progress.js';
-import Done from './done.js';
+import {LsGen} from './functions';
+
+// TODO: CSS Dynamic - fail task
+// TODO: Drag and Drop (DnD) - Change task position
+// TODO: debug TypeError : currentStyle 
+
 
 // Content ======================================
 class Content extends Component {
 
-  // Construtor ---------------------
-  constructor(props){
-      super(props)
-      this.state = {
-          tasks:[
-              {id: 1, name: 'todo', status:'todo', checked: false},
-              {id: 2, name: 'progress', status:'progress', checked: false},
-              {id: 3, name: 'done', status:'done', checked: false},
-          ]
-      }
-      // Binding --------------------
-      this.handleTasksKey = this.handleTasksKey.bind(this)
-      this.handleTasksClick = this.handleTasksClick.bind(this)
-  }
+    // Construtor --------------------------------
+    constructor(props) {
+        super(props)
+        // Source Of Truth
+        this.state = {
+            todo: [],
+            progress: [],
+            done: []
+        }
+        // Binding --------------------
+        this.handleTasksKey = this.handleTasksKey.bind(this)
+    }
 
+    // Events ------------------------------------
+    // Key Handling
+    handleTasksKey(e) {
+        // Data Event
+        const name = e.target.name
+        const value = e.target.value
+        const key = e.key
+        const list = this.state[name]
+        // Condition of Validation
+        if (key === 'Enter' && value !== '') {
 
-  // Events ------------------------------------
-  handleTasksKey(task){
-      const tasks = [...this.state.tasks, task];
-      this.setState({
-          tasks
-      })   
-  }
-  // 
-  handleTasksClick(id, status){
-      const tasks = this.state.tasks;
-      tasks.map( (task) => {
-          return task.id === id ? task.status = status : null
-      })
-      this.setState({
-          tasks
-      })   
-  }
+            // Prepare Task
+            const task = {}
+            task['id'] = (list.length > 0) ? (list.slice(-1)[0].id + 1) : 1
+            task['task'] = value
+            task['checked'] = false
 
-  // Rendering ----------------------
-  render(){
-      return(
-          <div className="container">      
-             
-              {/* Todo List */}
-              <Todo tasks={this.state.tasks} 
-                  onTasksKey={this.handleTasksKey} 
-                  onTasksClick={this.handleTasksClick}  />
-              
-              {/* Progress List */}
-              <Progress tasks={this.state.tasks} 
-                  onTasksKey={this.handleTasksKey} 
-                  onTasksClick={this.handleTasksClick}  />
+            // Set State
+            const tasks = [...list, task]
+            this.setState({
+                [name]: tasks
+            })
 
-              {/* Done List */}
-              <Done tasks={this.state.tasks} 
-                  onTasksKey={this.handleTasksKey} 
-                  onTasksClick={this.handleTasksClick}  />
-              
-          </div>
-      )
-  }
+            // Empty Input after Enter
+            e.target.value = ''
+        }
+    }
+    // Click Handling
+    handleTasksClick(task, nextname) {
+        if (nextname === 'finished') {
+            // Task Finally
+            const tasks = this.listRemoveItem(this.state.done, task)
+            // 
+            this.setState({
+                done: tasks
+            })
+        } else {
+            // Task in Progress
+            const list = this.state[nextname]
+            const lastID = (list.length > 0) ? (list.slice(-1)[0].id) : 0
+            const clone = Object.assign({}, task)
+            clone['id'] = lastID + 1
+            const tasks = this.listAdder(list, clone)
+            // 
+            this.setState({
+                [nextname]: tasks
+            })
+        }
+    }
+
+    // list Manager ---------------------------------
+    // list Adder 
+    listAdder(list, task) {
+        const ls = [...list]
+        ls.push(task)
+        return ls
+    }
+
+    // list Item Remover
+    listRemoveItem(list, task) {
+        return list.filter((el) => {
+            return el.id !== task.id
+        })
+    }
+
+    // list Generator
+    listMaker(list, nextname) {
+        return list.length > 0 ? list.map((el) => {
+            return <li onClick={this.handleTasksClick.bind(this, el, nextname)} key={el.id} >{el.task}</li>
+        }) : null
+    }
+
+    // Rendering ---------------------------------------
+    render() {
+
+        //  You can control INPUT element as modularity :)
+        return (
+            <div className="container">
+
+                {/***********************Todo**********************/}
+                <LsGen
+                    // Specialization
+                    title="Todo List"
+                    list={this.listMaker(this.state.todo, 'progress')}
+                >
+                    {/*Containment*/}
+                    <input name='todo' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />
+                </LsGen>
+
+                {/*********************Progress********************/}
+                <LsGen
+                    // Specialization
+                    title="Progress List"
+                    list={this.listMaker(this.state.progress, 'done')}
+                >
+                    {/*Containment*/}
+                    {/*<input name='progress' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />*/}
+                </LsGen>
+
+                {/***********************Done***********************/}
+                <LsGen
+                    // Specialization
+                    title="Done List"
+                    list={this.listMaker(this.state.done, 'finished')}
+                >
+                    {/*Containment*/}
+                    {/*<input name='done' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />*/}
+                </LsGen>
+
+            </div>
+        )
+    }
 }
 
 export default Content;
