@@ -1,26 +1,64 @@
+* {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .container {
   border: 1px solid lightgray;
   padding: 20px;
+  display: -ms-grid;
+  display: grid;
+  grid-column-gap: 5vw;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-rows: 1fr 5fr;
+      grid-template-rows: 1fr 5fr;
 }
 
-.container .list {
-  float: left;
-}
-
-.container .list:nth-child(2) {
-  padding-right: 5vw;
-  padding-left: 5vw;
-}
-
-.container .list input {
+.container input {
+  -ms-grid-row: 1;
+      grid-row-start: 1;
+  grid-column: span 3;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-left: 200px;
+  margin-right: 200px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   border: none;
   border-radius: 4px;
   padding: 10px;
-  font-size: 0.6em;
+  font-size: 0.8em;
 }
 
-.container .list input:focus {
+.container input:focus {
   outline: none;
+}
+
+.container .list {
+  -ms-grid-row: 2;
+      grid-row-start: 2;
+}
+
+.container .list:nth-of-type(1) {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 1;
+  grid-column: 1/2;
+}
+
+.container .list:nth-of-type(2) {
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 1;
+  grid-column: 2/3;
+}
+
+.container .list:nth-of-type(3) {
+  -ms-grid-column: 3;
+  -ms-grid-column-span: 1;
+  grid-column: 3/4;
 }
 
 .container .list ul {
@@ -31,19 +69,38 @@
 .container .list ul li {
   border-bottom: 1px solid lightcyan;
   display: block;
-}
-
-.container .list ul li.checked {
+  text-shadow: 1px 1px gray;
+  line-height: 50px;
   position: relative;
 }
 
+.container .list ul li::before {
+  position: absolute;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: optimizeSpeed;
+  text-shadow: none;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: "\f142";
+  left: 0px;
+  top: 0px;
+}
+
+.container .list ul li.checked {
+  color: red;
+  position: relative;
+  text-decoration: line-through;
+}
+
 .container .list ul li.checked::before {
-  content: '';
+  content: "";
   position: absolute;
   border: 1px solid lightgray;
+  border-radius: 2px;
   width: 10px;
   height: 10px;
-  background: white;
+  background: red;
   left: 0;
   top: 35%;
 }

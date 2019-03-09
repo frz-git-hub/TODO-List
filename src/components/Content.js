@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
-import {LsGen} from './functions';
+import '../css/list.css';
 
-// TODO: CSS Dynamic - fail task
-// TODO: Drag and Drop (DnD) - Change task position
-// TODO: debug TypeError : currentStyle 
+// TODO: Drag and Drop (DnD) - Change task position 
 
+// Composition =============================
+function LsGen(props) {
+    return (
+        <div className="list">
+            <h2>{props.title}</h2>
+            {props.children}
+            <ul>
+                {props.list}
+            </ul>
+        </div>
+    )
+}
 
 // Content ======================================
 class Content extends Component {
@@ -22,7 +32,7 @@ class Content extends Component {
         this.handleTasksKey = this.handleTasksKey.bind(this)
     }
 
-    // Events ------------------------------------
+    // Events Handling ------------------------------------
     // Key Handling
     handleTasksKey(e) {
         // Data Event
@@ -49,8 +59,15 @@ class Content extends Component {
             e.target.value = ''
         }
     }
+
+    // ContextMenu Handler
+    handleContextMenu(task, e) {
+        e.preventDefault()
+        console.log(task);
+    }
+
     // Click Handling
-    handleTasksClick(task, nextname) {
+    handleTasksClick(task, nextname, e) {
         if (nextname === 'finished') {
             // Task Finally
             const tasks = this.listRemoveItem(this.state.done, task)
@@ -60,9 +77,11 @@ class Content extends Component {
             })
         } else {
             // Task in Progress
+            if (task.checked) return null;
             const list = this.state[nextname]
             const lastID = (list.length > 0) ? (list.slice(-1)[0].id) : 0
             const clone = Object.assign({}, task)
+            task['checked'] = true
             clone['id'] = lastID + 1
             const tasks = this.listAdder(list, clone)
             // 
@@ -71,6 +90,7 @@ class Content extends Component {
             })
         }
     }
+
 
     // list Manager ---------------------------------
     // list Adder 
@@ -90,7 +110,14 @@ class Content extends Component {
     // list Generator
     listMaker(list, nextname) {
         return list.length > 0 ? list.map((el) => {
-            return <li onClick={this.handleTasksClick.bind(this, el, nextname)} key={el.id} >{el.task}</li>
+            return <li
+                className={el.checked ? 'checked' : null}
+                onClick={this.handleTasksClick.bind(this, el, nextname)}
+                onContextMenu={this.handleContextMenu.bind(this, el)}
+                key={el.id}
+            >
+                {el.task}
+            </li>
         }) : null
     }
 
@@ -101,6 +128,7 @@ class Content extends Component {
         return (
             <div className="container">
 
+                <input name='todo' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />
                 {/***********************Todo**********************/}
                 <LsGen
                     // Specialization
@@ -108,7 +136,7 @@ class Content extends Component {
                     list={this.listMaker(this.state.todo, 'progress')}
                 >
                     {/*Containment*/}
-                    <input name='todo' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />
+                    {/*<input name='todo' placeholder="Add to list..." onKeyPress={this.handleTasksKey} />*/}
                 </LsGen>
 
                 {/*********************Progress********************/}
